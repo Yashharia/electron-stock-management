@@ -1,0 +1,119 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.td-name{
+  width: 70%;
+}
+.react-select__placeholder{color: #000;}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  top: 90%;
+}
+
+.bordered-table{text-align: center; margin: auto} 
+.bordered-table th{border: 1px solid black; border-width: 1px !important;font-size:12px}
+.react-report-table, .bordered-table td{font-size:14px}
+.small-fonts{font-size:12px;}
+.small-fonts p{margin-bottom: 5px}
+.react-report-table.small-fonts td{background: white}
+.react-report-table.small-fonts th{background: papayawhip !important}
+.react-report-table th, .react-report-table td {padding:2px 5px}
+
+.quality-report{font-size: 12px}
+
+.mySelect__value-container{
+  height: 35px;
+ }
+
+ 
+  @media print {
+    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6,
+    .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+         float: left;               
+    }
+
+    .col-sm-12 {
+         width: 100%;
+    }
+
+    .col-sm-11 {
+         width: 91.66666666666666%;
+    }
+
+    .col-sm-10 {
+         width: 83.33333333333334%;
+    }
+
+    .col-sm-9 {
+          width: 75%;
+    }
+
+    .col-sm-8 {
+          width: 66.66666666666666%;
+    }
+
+     .col-sm-7 {
+          width: 58.333333333333336%;
+     }
+
+     .col-sm-6 {
+          width: 50%;
+     }
+
+     .col-sm-5 {
+          width: 41.66666666666667%;
+     }
+
+     .col-sm-4 {
+          width: 33.33333333333333%;
+     }
+
+     .col-sm-3 {
+          width: 25%;
+     }
+
+     .col-sm-2 {
+            width: 16.666666666666664%;
+     }
+
+     .col-sm-1 {
+            width: 8.333333333333332%;
+      }            
+}
