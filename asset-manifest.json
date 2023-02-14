@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/stock-management/static/css/main.7f5d2098.css",
+    "main.js": "/stock-management/static/js/main.0fa2643c.js",
+    "static/js/787.30617246.chunk.js": "/stock-management/static/js/787.30617246.chunk.js",
+    "index.html": "/stock-management/index.html",
+    "main.7f5d2098.css.map": "/stock-management/static/css/main.7f5d2098.css.map",
+    "main.0fa2643c.js.map": "/stock-management/static/js/main.0fa2643c.js.map",
+    "787.30617246.chunk.js.map": "/stock-management/static/js/787.30617246.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7f5d2098.css",
+    "static/js/main.0fa2643c.js"
+  ]
+}
