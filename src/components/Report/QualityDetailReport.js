@@ -88,14 +88,22 @@ export default function ViewReport() {
       num_of_taka: openingBal
     })
   }
+
+  var dispatchTotal = 0;
+  var receiptTotal = 0;
   return (
     <>
       <h4 className="text-center">Quality Wise Report</h4>
       <Row className="pt-3">
         <Col>
           <Select
-            options={qualitynames} isSearchable={true} maxMenuHeight={100}
-            onChange={(e) => {setname(e.value);settype("");setdataValue("");}}/>
+            options={qualitynames} value={{ value: name, label: name }} isSearchable={true} maxMenuHeight={100}
+            onChange={(e) => {
+              setname(e.value);settype("");setdataValue("");
+              const currentActiveInput = document.querySelector('input:focus');
+              const nextActiveInput = currentActiveInput.nextElementSibling;
+              nextActiveInput.focus();
+              }}/>
         </Col>
         <Col>
           <Select
@@ -114,9 +122,7 @@ export default function ViewReport() {
             options={getListDetails(name, "design")}
             isSearchable={true} maxMenuHeight={100} 
             classNamePrefix="react-select"
-            isDisabled={
-              getListDetails(name, "design").length > 0 ? false : true
-            }
+            isDisabled={getListDetails(name, "design").length > 0 ? false : true}
             styles={disabledStyles}
             onChange={(e) => {
               settype("design");
@@ -151,12 +157,16 @@ export default function ViewReport() {
           </tr>
           {passbookData.map((item, i) => {
             var color = item.type == "Receipt" ? "#b2e9b2" : "#fda09b";
+            var num_of_taka = ((item.num_of_taka === undefined || isNaN(item.num_of_taka))? 0 : item.num_of_taka)
             if (item.type == "Dispatch"){
-              total = total - item.num_of_taka;
+              total = total - num_of_taka;
+              dispatchTotal = dispatchTotal + num_of_taka;
             }
             else{
-              total = total + item.num_of_taka;
+              total = total + num_of_taka;
+              if (item.type == "Receipt") receiptTotal = receiptTotal + num_of_taka;
             }
+            console.log(num_of_taka, 'num of taka', item.type)
             return (
               <tr>
                 <td> {(item.challanDateTime)?normalDateFormat(item.challanDateTime) : ""}</td>
@@ -172,6 +182,14 @@ export default function ViewReport() {
               </tr>
             );
           })}
+           <tr>
+                <td></td>
+                <td></td>
+                <td><b>Total</b></td>
+                <td><b>{dispatchTotal}</b></td>
+                <td><b>{receiptTotal}</b></td>
+                <td></td>
+            </tr>
         </Table>
         <div className="text-center"><CloseBtn/></div>
         </>

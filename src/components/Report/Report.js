@@ -29,7 +29,7 @@ import DatePicker from "react-datepicker";
 const Report = ({ type }) => {
   var today= new Date();
   var todayTimestamp = new Date(new Date().setDate(today.getDate() + 1)).getTime();
-  var priorDate = new Date(new Date().setDate(today.getDate() - 30)).getTime();
+  var priorDate = new Date(new Date().setDate(today.getDate() - 7)).getTime();
 
   const [quickDates, setQuickDates] = useState();
   const [fromDate, setfromDate] = useState(priorDate);
@@ -50,16 +50,15 @@ const Report = ({ type }) => {
     let q = query(collection(db, 'Challan'), where("type", "==", type));
     if(quickDates !== "" && quickDates != undefined){
       var date = new Date(getMonthDayYear(new Date()))
-      var today = new Date(getMonthDayYear(new Date())).getTime()
+      var todayDate = getValueFormatDate(new Date().getTime());
       var yesterday = date.setDate(date.getDate() - 1);
-      if (quickDates === 'today') date = today;
+      if (quickDates === 'today') date = new Date(todayDate).getTime();
       if (quickDates === 'yesterday') date = yesterday;
-      q = query(q, where("timestamp", "==",date))
-      // console.log(quickDates, date.getTime(), getMonthDayYear(date), 'check')
+      q = query(q, where("timestamp", "==",date),orderBy("challanNo"))
     }else{
-      if (fromDate) q = query(q, where("timestamp", ">=", new Date(fromDate).getTime()));
-      if (toDate) q = query(q, where("timestamp", "<=", new Date(toDate).getTime()));
-      query(q,orderBy("timestamp"));
+      if (fromDate) q = query(q, where("challanDateTime", ">=", new Date(fromDate).getTime()));
+      if (toDate) q = query(q, where("challanDateTime", "<=", new Date(toDate).getTime()));
+      query(q,orderBy("challanDateTime"));
     }
 
     await getChallans(q).then(filterArray => setdata(filterArray))
@@ -224,7 +223,7 @@ const Report = ({ type }) => {
     <>
     <Container className="pb-5 mt-0">
       <h5 className="text-center mb-4">{type} Report</h5>
-      <Row>
+      <Row className="d-print-none">
         <Col>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Today / Yesterday</Form.Label>
@@ -263,10 +262,16 @@ const Report = ({ type }) => {
           </Col>
         )}
       </Row>
-      <Row className="pt-3">
+      <Row className="pt-3 d-print-none">
         <Col md={1}><p>Quality</p></Col>
         <Col>
-          <Select options={qualitynames} maxMenuHeight={100} isSearchable={true} onChange={(e) => {setname(e.value);setqualityType("");setdataValue("");}}/>
+          <Select options={qualitynames} value={{ value: name, label: name }} maxMenuHeight={100} isSearchable={true} 
+          onChange={(e) => {
+            setname(e.value);setqualityType("");setdataValue("");
+            const currentActiveInput = document.querySelector('input:focus');
+            const nextActiveInput = currentActiveInput.nextElementSibling;
+            nextActiveInput.focus();
+          }}/>
         </Col>
         <Col>
           <Select maxMenuHeight={100}
@@ -287,14 +292,17 @@ const Report = ({ type }) => {
             onChange={(e) => {setqualityType("design");setdataValue(e.value);}}/>
         </Col>
       </Row>
-      <Row className="text-center mb-5">
+      <Row className="text-center mb-5 d-print-none">
         <Col className="mt-4">
-          <Button onClick={getData}>Filter</Button><CloseBtn/>
+          <Button onClick={getData}>Filter</Button><CloseBtn/><Button onClick={()=>window.print()}>Print</Button>
         </Col>
       </Row>
+      <div className="mb-1">
+        <b>Form date: {normalDateFormat(fromDate)}</b> <br/>  <b>To date: {normalDateFormat(toDate)}</b>
+      </div>
       {data.length > 0 && <ReactTable columns={columns} data={filteredData} showEditDelete={true}/>}
       <br/>
-      <div className="text-center"><CloseBtn/></div>
+      <div className="text-center d-print-none"><CloseBtn/></div>
     </Container>
     </>
   );

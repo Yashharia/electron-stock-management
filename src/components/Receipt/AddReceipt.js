@@ -47,6 +47,7 @@ function AddReceipt({ type, history }) {
 
   var todayDate = getValueFormatDate(new Date().getTime());
   const[timestamp, setTimestamp]= useState(new Date(todayDate).getTime());
+  console.log(timestamp, 'todayDate')
 
   const handleSubmit = async (e) => {
     setdisableSubmit(true);
@@ -64,13 +65,14 @@ function AddReceipt({ type, history }) {
       if (docSnap.exists() && !editid) {
         alert("Receipt with Chall No: " +challanNo +" and data: " +date +" already exist");
         setdisableSubmit(false);
-      } else {        let qualities = [...new Set(dataList.map(item => item.name))]
+      } else {        
+        let qualities = [...new Set(dataList.map(item => item.name))]
         .filter((name) => {return name != ""}); //unique qualities
         let qualitiesValues = [...new Set(dataList.map(item => item.value))]
         .filter((name) => {return name !== undefined}); // unique internal values
 
         var dataListVal = dataList.filter(item => {
-          if(item.value == undefined || item.value =='') return false
+          if(item.value == undefined || item.value =='' || isNaN(item.value)) return false
           return true 
         })
             

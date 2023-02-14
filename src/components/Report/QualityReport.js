@@ -23,7 +23,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Select from "react-select";
-import { getAllQualities, getChallans, sumArray } from "../../api/firebase-api";
+import { getAllQualities, getChallans, normalDateFormat, sumArray } from "../../api/firebase-api";
 import CloseBtn from "../CloseBtn/CloseBtn";
 import ReactTable from "../ReactTable/ReactTable";
 import { clearConfigCache } from "prettier";
@@ -109,6 +109,7 @@ const QualityReport = () => {
 var result = qualitylist
  if (filterList.length > 0) result = qualitylist.filter((item) => filterList.some((filterItem) => filterItem.value === item.name));
   var totalSum = qualityNames.reduce((result, item)=> {return result + item.qualityTotal}, 0);
+  var todaysDate = new Date();
   return (
     isRefresh ? <h2 className="text-center">Refreshing</h2> :
     <Container fluid>
@@ -117,7 +118,7 @@ var result = qualitylist
         <div className="text-center">
           <CloseBtn />
           <Button variant="primary" type="button" className="mx-2" onClick={()=>window.print()}>Print</Button>
-          <Button variant="primary" type="button" className="mx-2" onClick={()=>{getChallanData();}}>Refresh</Button>
+          <Button variant="primary" type="button" className="mx-2" onClick={()=>window.location.reload()}>Refresh</Button>
         </div>
         
         <Row className="pt-3">
@@ -139,6 +140,7 @@ var result = qualitylist
         </Row>
       </div>
       <Row className="pt-5 quality-report">
+        <div><h6>Date: {normalDateFormat(todaysDate)}<br/> Time: {todaysDate.getHours()}:{todaysDate.getMinutes()}</h6></div>
           {result?.map((item, i) => {
             var singleQualityName = item.name;
             const columns = [
