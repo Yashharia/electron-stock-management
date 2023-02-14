@@ -95,8 +95,8 @@ export default function ViewReport() {
     <>
       <h4 className="text-center">Quality Wise Report</h4>
       <Row className="pt-3">
-        <Col>
-          <Select
+        <Col xs={6}   sm={3} className="my-2">
+          <Select  
             options={qualitynames} value={{ value: name, label: name }} isSearchable={true} maxMenuHeight={100}
             onChange={(e) => {
               setname(e.value);settype("");setdataValue("");
@@ -105,19 +105,19 @@ export default function ViewReport() {
               nextActiveInput.focus();
               }}/>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Select
             options={getListDetails(name, "color")}
             isSearchable={true} isDisabled={getListDetails(name, "color").length > 0 ? false : true}
             styles={disabledStyles} maxMenuHeight={100} onChange={(e) => {settype("color");setdataValue(e.value);}}/>
         </Col>
-        <Col>
+        <Col xs={6}  sm={3} className="my-2">
           <Select
             options={getListDetails(name, "chartwise")}
             isSearchable={true} isDisabled={getListDetails(name, "chartwise").length > 0 ? false : true}
             styles={disabledStyles} maxMenuHeight={100} onChange={(e) => {settype("chartwise");setdataValue(e.value);}}/>
         </Col>
-        <Col>
+        <Col xs={6}  sm={3} className="my-2">
           <Select
             options={getListDetails(name, "design")}
             isSearchable={true} maxMenuHeight={100} 

@@ -177,7 +177,7 @@ var result = qualitylist
               }
             })
             return (
-              <Col className="mb-4 single-quality" xs={4} sm={6} md={4} xl={2} key={i}>
+              <Col className="mb-4 single-quality" xs={6} sm={6} md={4} xl={2} key={i}>
                 <div className="alert alert-success">
                   <Row>
                     <Col xs={6} md={9}><p><strong>{singleQualityName} </strong></p></Col>
