@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/electron-stock-management/static/css/main.7f5d2098.css",
-    "main.js": "/electron-stock-management/static/js/main.ec692982.js",
+    "main.js": "/electron-stock-management/static/js/main.d771d7fd.js",
     "static/js/787.30617246.chunk.js": "/electron-stock-management/static/js/787.30617246.chunk.js",
     "index.html": "/electron-stock-management/index.html",
     "main.7f5d2098.css.map": "/electron-stock-management/static/css/main.7f5d2098.css.map",
-    "main.ec692982.js.map": "/electron-stock-management/static/js/main.ec692982.js.map",
+    "main.d771d7fd.js.map": "/electron-stock-management/static/js/main.d771d7fd.js.map",
     "787.30617246.chunk.js.map": "/electron-stock-management/static/js/787.30617246.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7f5d2098.css",
-    "static/js/main.ec692982.js"
+    "static/js/main.d771d7fd.js"
   ]
 }
