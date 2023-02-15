@@ -19,7 +19,7 @@ const header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
 
-          {(currentURL !== "https://yashharia.github.io" )? 
+          {(currentURL === "https://yashharia.github.io" )? 
             <>
               <NavDropdown title="Master" id="basic-nav-dropdown">
                 <LinkContainer to="/master/add/dying">
@@ -55,10 +55,10 @@ const header = () => {
             </>
           : 
           <>
-           <Link to="/dispact-report/"><Nav.Link >Dispatch reports</Nav.Link></Link>
-           <Link to="/report"><Nav.Link>Receipt reports</Nav.Link></Link>
-           <Link to="/quality-report"><Nav.Link>Taka Balance</Nav.Link></Link>
-           <Link to="/quality-wise-report"><Nav.Link>Quality wise stock report</Nav.Link></Link>
+           <LinkContainer to="/dispact-report/"><Nav.Link >Dispatch reports</Nav.Link></LinkContainer>
+           <LinkContainer to="/report"><Nav.Link>Receipt reports</Nav.Link></LinkContainer>
+           <LinkContainer to="/quality-report"><Nav.Link>Taka Balance</Nav.Link></LinkContainer>
+           <LinkContainer to="/quality-wise-report"><Nav.Link>Quality wise stock report</Nav.Link></LinkContainer>
           </>}
           </Nav>
         </Navbar.Collapse>
