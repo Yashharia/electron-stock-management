@@ -1,6 +1,7 @@
 import React from "react";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 
 const header = () => {
   var currentURL = window.location.origin;
@@ -54,10 +55,10 @@ const header = () => {
             </>
           : 
           <>
-           <Nav.Link href="/dispact-report/">Dispatch reports</Nav.Link>
-           <Nav.Link href="/report">Receipt reports</Nav.Link>
-           <Nav.Link href="/quality-report">Taka Balance</Nav.Link>
-           <Nav.Link href="/quality-wise-report">Quality wise stock report</Nav.Link>
+           <Link to="/dispact-report/"><Nav.Link >Dispatch reports</Nav.Link></Link>
+           <Link to="/report"><Nav.Link>Receipt reports</Nav.Link></Link>
+           <Link to="/quality-report"><Nav.Link>Taka Balance</Nav.Link></Link>
+           <Link to="/quality-wise-report"><Nav.Link>Quality wise stock report</Nav.Link></Link>
           </>}
           </Nav>
         </Navbar.Collapse>
