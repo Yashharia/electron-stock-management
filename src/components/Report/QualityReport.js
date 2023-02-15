@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Table,
   Form,
   Row,
-  Alert,
   Col,
   Container,
 } from "react-bootstrap";
 import { db } from "../../firebase";
 import {
   collection,
-  addDoc,
-  query,
-  onSnapshot,
-  doc,
-  updateDoc,
-  deleteDoc,
-  where,
-  orderBy,
-  getDoc,
-  getDocs,
 } from "firebase/firestore";
 import Select from "react-select";
 import { getAllQualities, getChallans, normalDateFormat, sumArray } from "../../api/firebase-api";
@@ -118,7 +106,7 @@ var result = qualitylist
         <div className="text-center">
           <CloseBtn />
           <Button variant="primary" type="button" className="mx-2" onClick={()=>window.print()}>Print</Button>
-          <Button variant="primary" type="button" className="mx-2" onClick={()=>window.location.reload()}>Refresh</Button>
+          <Button variant="primary" type="button" className="mx-2" onClick={()=>window.location.reload(true)}>Refresh</Button>
         </div>
         
         <Row className="pt-3">

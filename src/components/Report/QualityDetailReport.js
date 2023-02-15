@@ -95,7 +95,7 @@ export default function ViewReport() {
     <>
       <h4 className="text-center">Quality Wise Report</h4>
       <Row className="pt-3">
-        <Col xs={6}   sm={3} className="my-2">
+        <Col xs={6} sm={3} className="my-2">
           <Select  
             options={qualitynames} value={{ value: name, label: name }} isSearchable={true} maxMenuHeight={100}
             onChange={(e) => {
@@ -148,7 +148,7 @@ export default function ViewReport() {
           style={{ width: "70%" }}
         >
           <tr>
-            <th>Date</th>
+            <th style={{minWidth: '80px'}}>Date</th>
             <th>Challan</th>
             <th>Dying</th>
             <th>Dispatch</th>

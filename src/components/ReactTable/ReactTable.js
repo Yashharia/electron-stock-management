@@ -30,6 +30,7 @@ export default function ReactTable({ columns, data, initialState, getTrProps, ne
                   color: "black",
                   fontWeight: "bold",
                   width: column.width,
+                  minWidth: column.minWidth,
                 }}
               >
                 {column.render("Header")}

@@ -18,16 +18,23 @@ import QualityReport from "./components/Report/QualityReport";
 import QualityDetailReport from "./components/Report/QualityDetailReport";
 
 function App() {
+
+  var currentURL = window.location.origin;
+
   return (
     <>
       <Header />
       <Container>
         <div className="mt-5">
           <Routes>
-            <Route exact path="/receipt" element={<AddReceipt type="Receipt" />} />
-            <Route exact path="/edit/receipt/:editid" element={<AddReceipt type="Receipt" />} />
-            <Route exact path="/edit/receipt/dispatch/:editid" element={<AddReceipt type="Dispatch" />}/>
-            <Route exact path="/dispatch" element={<AddReceipt type="Dispatch" />}/>
+            {(currentURL !== "https://yashharia.github.io" ) && 
+              <>
+              <Route exact path="/receipt" element={<AddReceipt type="Receipt" />} />
+              <Route exact path="/edit/receipt/:editid" element={<AddReceipt type="Receipt" />} />
+              <Route exact path="/edit/receipt/dispatch/:editid" element={<AddReceipt type="Dispatch" />}/>
+              <Route exact path="/dispatch" element={<AddReceipt type="Dispatch" />}/>
+              </>
+            }
             <Route path="/dispact-report" element={<Report type="Dispatch"/>} />
             <Route path="/report" element={<Report type="Receipt"/>} />
             <Route path="/quality-report" element={<QualityReport/>} />

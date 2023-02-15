@@ -46,6 +46,8 @@ const Report = ({ type }) => {
   const [qualityType, setqualityType] = useState("");
   const [dataValue, setdataValue] = useState("");
 
+  var currentURL = window.location.origin;
+
   const getData = async() => {
     let q = query(collection(db, 'Challan'), where("type", "==", type));
     if(quickDates !== "" && quickDates != undefined){
@@ -102,8 +104,7 @@ const Report = ({ type }) => {
   });
   qualitynames.unshift({ label: "Select an option", value: "" });
 
-  const columns = React.useMemo(
-    () => [
+  const columns =[
       {
         Header: "Challan No.",
         accessor: "challanNo",
@@ -113,6 +114,7 @@ const Report = ({ type }) => {
         Header: "Date",
         accessor: "date",
         width: "8%",
+        minWidth: '90px',
       },
       {
         Header: "Job worker",
@@ -147,20 +149,13 @@ const Report = ({ type }) => {
         Header: "Num of Taka",
         accessor: "num_of_taka",
         width: "6%",
-      },
-      {
-        Header: "",
-        accessor: "edit",
-        width: "2%",
-      },
-      {
-        Header: "",
-        accessor: "delete",
-        width: "2%",
-      },
-    ],
-    []
-  );
+      }
+    ]
+
+    if(currentURL !== "https://yashharia.github.io" ) {
+      columns.push({Header: "",accessor: "edit",width: "2%",})
+      columns.push({Header: "",accessor: "delete",width: "2%",})
+    }
 
   const getListDetails = (name, listName) => {
     let arr = [...qualitylist];
@@ -224,29 +219,29 @@ const Report = ({ type }) => {
     <Container className="pb-5 mt-0">
       <h5 className="text-center mb-4">{type} Report</h5>
       <Row className="d-print-none">
-        <Col>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Today / Yesterday</Form.Label>
-          <Form.Select value={quickDates} aria-label="Default select example" onChange={(e) => setQuickDates(e.target.value)}>
-            <option value=''>Select option</option>
-            <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-          </Form.Select>
-        </Form.Group>
+        <Col xs={6} sm={3} className="my-2">
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>Today / Yesterday</Form.Label>
+            <Form.Select value={quickDates} aria-label="Default select example" onChange={(e) => setQuickDates(e.target.value)}>
+              <option value=''>Select option</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+            </Form.Select>
+          </Form.Group>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>From Date</Form.Label>
             <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={fromDate} preventOpenOnFocus={true} onChange={(date) => {setfromDate(date);}} id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>To Date</Form.Label>
             <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={toDate} preventOpenOnFocus={true} onChange={(date) => {settoDate(date);}} id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Challan No.</Form.Label>
             <Form.Control type="text" placeholder="Challan no." value={challanNo} 
@@ -254,7 +249,7 @@ const Report = ({ type }) => {
           </Form.Group>
         </Col>
         {type == "Receipt" && (
-          <Col>
+          <Col xs={6} sm={3} className="my-2">
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Job Worker</Form.Label>
               <Select options={dyinglistnames} isSearchable={true} maxMenuHeight={100} onChange={(e) => {setdying(e.value);}}/>
@@ -264,7 +259,7 @@ const Report = ({ type }) => {
       </Row>
       <Row className="pt-3 d-print-none">
         <Col md={1}><p>Quality</p></Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Select options={qualitynames} value={{ value: name, label: name }} maxMenuHeight={100} isSearchable={true} 
           onChange={(e) => {
             setname(e.value);setqualityType("");setdataValue("");
@@ -273,19 +268,19 @@ const Report = ({ type }) => {
             nextActiveInput.focus();
           }}/>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "color")}
             isSearchable={true} isDisabled={getListDetails(name, "color").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("color");setdataValue(e.value);}}/>
         </Col>
-        <Col>
+        <Col xs={6} sm={3} className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "chartwise")}
             isSearchable={true} isDisabled={getListDetails(name, "chartwise").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("chartwise");setdataValue(e.value);}}/>
         </Col>
-        <Col>
+        <Col xs={6} sm={2} className="my-2">
           <Select options={getListDetails(name, "design")} maxMenuHeight={100}
             isSearchable={true} classNamePrefix="react-select" 
             isDisabled={getListDetails(name, "design").length > 0 ? false : true} styles={disabledStyles}
