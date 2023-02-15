@@ -19,7 +19,7 @@ const header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
 
-          {(currentURL === "https://yashharia.github.io" )? 
+          {(currentURL !== "https://yashharia.github.io" )? 
             <>
               <NavDropdown title="Master" id="basic-nav-dropdown">
                 <LinkContainer to="/master/add/dying">
