@@ -8,6 +8,8 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDocs,
+  where,
 } from "firebase/firestore";
 import React, { useState } from "react";
 import CloseBtn from "../CloseBtn/CloseBtn";
@@ -16,6 +18,7 @@ import CloseBtn from "../CloseBtn/CloseBtn";
 function Dying() {
   const [name, setname] = useState("");
   const [isEdit, setisEdit] = useState(false);
+  const [prevName, setPrevName] = useState("");
   const [editValue, seteditValue] = useState("");
   const [Dying, setDying] = useState([]);
 
@@ -23,6 +26,13 @@ function Dying() {
     e.preventDefault();
     if (name !== "") {
       if(isEdit){ // Edit value
+        const q = query(collection(db, "Challan"), where("dying", "==", prevName));
+        getDocs(q).then(docs => {
+          docs.forEach(item => {
+            var id = item.id;
+            updateDoc(doc(db, "Challan", id), {dying: name})
+          })
+        })
         updateDoc(doc(db, "Dying", editValue), {name});
         setisEdit(false); seteditValue('');
         alert('Value updated')
@@ -82,7 +92,7 @@ function Dying() {
               <tr key={i}>
                 <td>{i}</td>
                 <td>{data.name}</td>
-                <td className="text-center"><Button variant="success" onClick={()=>{setisEdit(true); seteditValue(data.id); setname(data.name) }}>Edit</Button></td>
+                <td className="text-center"><Button variant="success" onClick={()=>{setisEdit(true); seteditValue(data.id); setname(data.name); setPrevName(data.name) }}>Edit</Button></td>
                 <td className="text-center"><Button variant="danger"
                 onClick={()=>{
                   if (window.confirm("Are you sure you want to delete?") == true)

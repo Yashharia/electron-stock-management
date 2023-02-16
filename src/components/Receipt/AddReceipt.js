@@ -72,7 +72,7 @@ function AddReceipt({ type, history }) {
         .filter((name) => {return name !== undefined}); // unique internal values
 
         var dataListVal = dataList.filter(item => {
-          if(item.value == undefined || item.value =='' || isNaN(item.value)) return false
+          if(item.value == undefined || item.value =='') return false
           return true 
         })
             
@@ -194,6 +194,8 @@ function AddReceipt({ type, history }) {
   });
 
   qualitynames.unshift({ value: "", label: "Select option" })
+
+  console.log(dataList,'dataList')
 
   return (
     <>

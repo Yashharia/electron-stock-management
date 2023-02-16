@@ -11,6 +11,8 @@ import {
   orderBy,
   serverTimestamp,
   Timestamp,
+  getDocsFromServer,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -22,8 +24,9 @@ const getChallans = async(q) => {
   try{
     let challanArr = await new Promise((resolve, reject) => {
       let filterArray = [];
-      onSnapshot(q, (querySnapshot) => {
+      getDocsFromServer(q).then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
+          console.log(doc.data(), 'getchallan')
           var docData = doc.data();
             var internalObjs =  docData.dataList
             internalObjs.forEach(function(item, i) {

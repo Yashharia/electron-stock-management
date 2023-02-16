@@ -15,7 +15,7 @@ import {
   endAt,
   orderBy,
   getDoc,
-  setDoc,
+  setDoc, get, getDocFromServer,
 } from "firebase/firestore";
 import { BsFillTrashFill, BsPencilFill} from "react-icons/bs";
 import Select from "react-select";
@@ -36,9 +36,7 @@ const Report = ({ type }) => {
   const [toDate, settoDate] = useState(todayTimestamp);
   const [challanNo, setchallanNo] = useState("");
   const [dying, setdying] = useState("");
-  const [quality, setquality] = useState("");
   const [data, setdata] = useState([]);
-  const [dispatchdata, setdispatchdata] = useState([]);
   const [dyinglist, setdyinglist] = useState([]);
   const [qualitylist, setqualitylist] = useState([]);
 
@@ -117,12 +115,6 @@ const Report = ({ type }) => {
         minWidth: '90px',
       },
       {
-        Header: "Job worker",
-        accessor: "dying",
-        width: "10%",
-        show: type != "Dispatch" ? "true" : "false",
-      },
-      {
         Header: "Taka Quality",
         accessor: "taka_quality",
         width: "20%",
@@ -157,6 +149,8 @@ const Report = ({ type }) => {
       columns.push({Header: "",accessor: "delete",width: "2%",})
     }
 
+    if(type !== "Dispatch") columns.splice(2,0,{Header: "Job worker",accessor: "dying",width: "10%",})
+
   const getListDetails = (name, listName) => {
     let arr = [...qualitylist];
     let obj = arr.filter((o) => o.name === name);
@@ -180,9 +174,15 @@ const Report = ({ type }) => {
       getDoc(doc(db, "Challan", docid)).then(docSnap =>{
         let dataList = docSnap.data().dataList;
         dataList.splice(indexValue, 1);
-        updateDoc(doc(db, "Challan", docid), {dataList: dataList}).then(doc => {
+        if(dataList.length == 0) {
+          deleteDoc(doc(db, "Challan", docid));
           alert('Entry deleted')
-        })
+        }
+        else{
+          updateDoc(doc(db, "Challan", docid), {dataList: dataList}).then(doc => {
+            alert('Entry deleted')
+          })
+        }
         setdata(prevState => [...prevState.filter((item) => item.challanNo != docid && item.indexValue != indexValue ) ])
       })
     }
@@ -219,7 +219,7 @@ const Report = ({ type }) => {
     <Container className="pb-5 mt-0">
       <h5 className="text-center mb-4">{type} Report</h5>
       <Row className="d-print-none">
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Today / Yesterday</Form.Label>
             <Form.Select value={quickDates} aria-label="Default select example" onChange={(e) => setQuickDates(e.target.value)}>
@@ -229,19 +229,19 @@ const Report = ({ type }) => {
             </Form.Select>
           </Form.Group>
         </Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>From Date</Form.Label>
             <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={fromDate} preventOpenOnFocus={true} onChange={(date) => {setfromDate(date);}} id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>To Date</Form.Label>
             <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={toDate} preventOpenOnFocus={true} onChange={(date) => {settoDate(date);}} id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Challan No.</Form.Label>
             <Form.Control type="text" placeholder="Challan no." value={challanNo} 
@@ -249,7 +249,7 @@ const Report = ({ type }) => {
           </Form.Group>
         </Col>
         {type == "Receipt" && (
-          <Col xs={6} sm={3} className="my-2">
+          <Col  className="my-2">
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Job Worker</Form.Label>
               <Select options={dyinglistnames} isSearchable={true} maxMenuHeight={100} onChange={(e) => {setdying(e.value);}}/>
@@ -259,7 +259,7 @@ const Report = ({ type }) => {
       </Row>
       <Row className="pt-3 d-print-none">
         <Col md={1}><p>Quality</p></Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Select options={qualitynames} value={{ value: name, label: name }} maxMenuHeight={100} isSearchable={true} 
           onChange={(e) => {
             setname(e.value);setqualityType("");setdataValue("");
@@ -268,19 +268,19 @@ const Report = ({ type }) => {
             nextActiveInput.focus();
           }}/>
         </Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "color")}
             isSearchable={true} isDisabled={getListDetails(name, "color").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("color");setdataValue(e.value);}}/>
         </Col>
-        <Col xs={6} sm={3} className="my-2">
+        <Col  className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "chartwise")}
             isSearchable={true} isDisabled={getListDetails(name, "chartwise").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("chartwise");setdataValue(e.value);}}/>
         </Col>
-        <Col xs={6} sm={2} className="my-2">
+        <Col  className="my-2">
           <Select options={getListDetails(name, "design")} maxMenuHeight={100}
             isSearchable={true} classNamePrefix="react-select" 
             isDisabled={getListDetails(name, "design").length > 0 ? false : true} styles={disabledStyles}

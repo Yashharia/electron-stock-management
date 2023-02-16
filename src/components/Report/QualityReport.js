@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Row,
-  Col,
-  Container,
-} from "react-bootstrap";
+import {Button,Form,Row,Col,Container,} from "react-bootstrap";
 import { db } from "../../firebase";
-import {
-  collection,
-} from "firebase/firestore";
+import {collection,} from "firebase/firestore";
 import Select from "react-select";
-import { getAllQualities, getChallans, normalDateFormat, sumArray } from "../../api/firebase-api";
+import { getAllQualities, getChallans, normalDateFormat } from "../../api/firebase-api";
 import CloseBtn from "../CloseBtn/CloseBtn";
 import ReactTable from "../ReactTable/ReactTable";
-import { clearConfigCache } from "prettier";
 
 const QualityReport = () => {
   const [minVal, setminVal] = useState(0);

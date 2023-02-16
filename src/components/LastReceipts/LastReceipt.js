@@ -12,25 +12,15 @@ export default function LastReceipt() {
     const getLastReceipts = async() => {
       const receiptQuery = query(collection(db, "Challan"), orderBy("timestamp", "desc"), where("type", "==", "Receipt"),limit(1));
       const dispatchQuery = query(collection(db, "Challan"), orderBy("timestamp", "desc"),where("type", "==", "Dispatch"),limit(1));
+
       await getChallans(receiptQuery).then(
-        filterArray => {setreceiptArray(filterArray); console.log(filterArray[0].dying)}
+        filterArray => {setreceiptArray(filterArray);}
       )
       await getChallans(dispatchQuery).then(
         dispatchArr => {setdispatchreceiptArray(dispatchArr)}
       )
     };
-
     getLastReceipts();
-
-    // getDocs(query(collection(db, "Challan"))).then(docs=>
-    //   {
-    //     docs.forEach((item) => {
-    //       console.log(item.id,'doc.id')
-    //       const docRef = doc(db, "Challan", item.id);
-    //       updateDoc(docRef, {timestamp: item.data().challanDateTime})
-    //     })
-    //   }
-    // )
 
   },[]);
 
@@ -76,7 +66,7 @@ export default function LastReceipt() {
             <h5>Last Receipt</h5>
             <Row className="pt-1 small-fonts">
               <Col md={3}><p><b>DATE: {normalDateFormat(receiptArray[0].challanDateTime)}</b></p></Col>
-              <Col md={6}><p><b>DYING: {receiptArray[0].dying}</b></p></Col>
+              <Col md={6}><p><b>DYING: {receiptArray[0].dying ?? ''}</b></p></Col>
               <Col md={3}><p><b>CHALLAN No.: {receiptArray[0].challanNo}</b></p></Col>
             </Row>
             <div>{receiptArray.length > 0 && <ReactTable columns={columns} data={receiptArray} newClassName="small-fonts"/>}</div>
