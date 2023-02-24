@@ -3,10 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 
 import React from "react";
-import { Routes, Route, HashRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
 
-import Add from "./components/Quality/Add";
 import Header from "./components/Header";
 import Report from "./components/Report/Report";
 import Home from "./components/Home";

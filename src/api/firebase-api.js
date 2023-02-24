@@ -26,7 +26,7 @@ const getChallans = async(q) => {
       let filterArray = [];
       getDocsFromServer(q).then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          console.log(doc.data(), 'getchallan')
+          // console.log(doc.data(), 'getchallan')
           var docData = doc.data();
             var internalObjs =  docData.dataList
             internalObjs.forEach(function(item, i) {
@@ -113,6 +113,12 @@ const getMonthDayYear = (timestamp) => {
   return normalDate;
 };
 
+const getFinalTime = (dateVal) => {
+  let date = new Date(dateVal);
+  let dateFormated = getValueFormatDate(date.getTime())
+  return new Date(dateFormated).getTime()
+}
+
 function sumArray(array) {
   let sum = 0; 
   array.forEach(item => {sum += item;});
@@ -122,6 +128,6 @@ function sumArray(array) {
 export {
   handleEdit,
   getAllQualities,
-  dateFormat,
+  dateFormat, getFinalTime,
   normalDateFormat, getValueFormatDate, sumArray,getChallans,getMonthDayYear
 };

@@ -2,35 +2,23 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Table,
-  Form,
   Row,
-  Alert,
   Col,
-  Container,
 } from "react-bootstrap";
 import Select from "react-select";
 import { db } from "../../firebase";
 import {
   collection,
-  addDoc,
   query,
-  onSnapshot,
-  doc,
-  updateDoc,
-  deleteDoc,
   where,
   orderBy,
-  getDoc,
-  getDocs,
 } from "firebase/firestore";
 import { getAllQualities, getChallans, normalDateFormat } from "../../api/firebase-api";
 import { disabledStyles } from "../../dropdown/disabledStyles";
 import CloseBtn from "../CloseBtn/CloseBtn";
-import ReactTable from "../ReactTable/ReactTable";
 
 export default function ViewReport() {
   const [qualitylist, setqualitylist] = useState([]);
-  const [qualityData, setqualityData] = useState([]);
   const [data, setdata] = useState([]);
   const [name, setname] = useState("");
   const [type, settype] = useState("");
@@ -91,10 +79,12 @@ export default function ViewReport() {
 
   var dispatchTotal = 0;
   var receiptTotal = 0;
+  var todaysDate = new Date();
+
   return (
     <>
       <h4 className="text-center">Quality Wise Report</h4>
-      <Row className="pt-3">
+      <Row className="pt-3 d-print-none">
         <Col xs={6} sm={3} className="my-2">
           <Select  
             options={qualitynames} value={{ value: name, label: name }} isSearchable={true} maxMenuHeight={100}
@@ -131,14 +121,16 @@ export default function ViewReport() {
           />
         </Col>
       </Row>
-      <Row>
+      <Row className="d-print-none">
         <Col className="text-center w-100 p-3">
           <Button variant="primary" onClick={getData}>
             Filter
           </Button>
           <CloseBtn />
+          <Button variant="primary" type="button" onClick={()=>window.print()}>Print</Button>
         </Col>
       </Row>
+      <div className="pb-2"><h6>Date: {normalDateFormat(todaysDate)} <span className="px-2">  </span> Time: {todaysDate.getHours()}:{todaysDate.getMinutes()}</h6></div>
 
       {data.length > 0 ? (
         <>
@@ -191,7 +183,10 @@ export default function ViewReport() {
                 <td></td>
             </tr>
         </Table>
-        <div className="text-center"><CloseBtn/></div>
+        <div className="text-center d-print-none">
+          <CloseBtn/>
+          <Button variant="primary" type="button" onClick={()=>window.print()}>Print</Button>
+          </div>
         </>
       ) : (
         <h4>No reports yet</h4>

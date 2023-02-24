@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useTable, useSortBy, useFilters } from "react-table";
+import React from "react";
+import { useTable, useSortBy } from "react-table";
 export default function ReactTable({ columns, data, initialState, getTrProps, newClassName="", showEditDelete }) {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(

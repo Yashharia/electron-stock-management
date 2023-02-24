@@ -4,23 +4,19 @@ import { Button, Table, Form, Row, Modal } from "react-bootstrap";
 import { db } from "../../firebase";
 import {
   collection,
-  addDoc,
   query,
   onSnapshot,
   doc,
   updateDoc,
   deleteDoc,
   where,
-  startAt,
-  endAt,
   orderBy,
   getDoc,
-  setDoc, get, getDocFromServer,
 } from "firebase/firestore";
 import { BsFillTrashFill, BsPencilFill} from "react-icons/bs";
 import Select from "react-select";
 import ReactTable from "../ReactTable/ReactTable";
-import { dateFormat, getAllQualities, getChallans, getMonthDayYear, getValueFormatDate, normalDateFormat } from "../../api/firebase-api";
+import { getAllQualities, getChallans, getFinalTime, getMonthDayYear, getValueFormatDate, normalDateFormat } from "../../api/firebase-api";
 import { disabledStyles } from "../../dropdown/disabledStyles";
 import CloseBtn from "../CloseBtn/CloseBtn";
 import { Link } from "react-router-dom";
@@ -28,8 +24,8 @@ import DatePicker from "react-datepicker";
 
 const Report = ({ type }) => {
   var today= new Date();
-  var todayTimestamp = new Date(new Date().setDate(today.getDate() + 1)).getTime();
-  var priorDate = new Date(new Date().setDate(today.getDate() - 7)).getTime();
+  var todayTimestamp = getFinalTime(new Date());
+  var priorDate = getFinalTime(new Date().setDate(today.getDate() - 7));
 
   const [quickDates, setQuickDates] = useState();
   const [fromDate, setfromDate] = useState(priorDate);
@@ -53,12 +49,10 @@ const Report = ({ type }) => {
       var todayDate = getValueFormatDate(new Date().getTime());
       var yesterday = date.setDate(date.getDate() - 1);
       if (quickDates === 'today') date = new Date(todayDate).getTime();
-      if (quickDates === 'yesterday') date = yesterday;
+      if (quickDates === 'yesterday') date = getFinalTime(yesterday);
       q = query(q, where("timestamp", "==",date),orderBy("challanNo"))
     }else{
-      if (fromDate) q = query(q, where("challanDateTime", ">=", new Date(fromDate).getTime()));
-      if (toDate) q = query(q, where("challanDateTime", "<=", new Date(toDate).getTime()));
-      query(q,orderBy("challanDateTime"));
+      q = query(q, where("challanDateTime", ">=", getFinalTime(fromDate)), where("challanDateTime", "<=", getFinalTime(toDate)),orderBy("challanDateTime"));
     }
 
     await getChallans(q).then(filterArray => setdata(filterArray))
@@ -175,15 +169,20 @@ const Report = ({ type }) => {
         let dataList = docSnap.data().dataList;
         dataList.splice(indexValue, 1);
         if(dataList.length == 0) {
-          deleteDoc(doc(db, "Challan", docid));
-          alert('Entry deleted')
+          if(window.confirm('This is the last entry in this challan, are you sure you want to delete it?') == true){
+            deleteDoc(doc(db, "Challan", docid));
+            alert('Entry deleted')
+          }
         }
         else{
           updateDoc(doc(db, "Challan", docid), {dataList: dataList}).then(doc => {
             alert('Entry deleted')
           })
         }
-        setdata(prevState => [...prevState.filter((item) => item.challanNo != docid && item.indexValue != indexValue ) ])
+        setdata(prevState => [...prevState.filter((item) => {
+          if(item.name == docid && item.indexValue == indexValue) return false
+          return true
+        } ) ])
       })
     }
   }
@@ -219,7 +218,7 @@ const Report = ({ type }) => {
     <Container className="pb-5 mt-0">
       <h5 className="text-center mb-4">{type} Report</h5>
       <Row className="d-print-none">
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Today / Yesterday</Form.Label>
             <Form.Select value={quickDates} aria-label="Default select example" onChange={(e) => setQuickDates(e.target.value)}>
@@ -229,19 +228,25 @@ const Report = ({ type }) => {
             </Form.Select>
           </Form.Group>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>From Date</Form.Label>
-            <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={fromDate} preventOpenOnFocus={true} onChange={(date) => {setfromDate(date);}} id="date-field" className="form-control"/>
+            <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} 
+            selected={fromDate} preventOpenOnFocus={true} 
+            onChange={(date) => {setfromDate(getFinalTime(date)); console.log(date, 'from date')}} 
+              id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>To Date</Form.Label>
-            <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} selected={toDate} preventOpenOnFocus={true} onChange={(date) => {settoDate(date);}} id="date-field" className="form-control"/>
+            <DatePicker dateFormat="dd/MM" disabled={(quickDates !== '' && quickDates != undefined) ? true : false} 
+            selected={toDate} preventOpenOnFocus={true} 
+            onChange={(date) => {settoDate(getFinalTime(date)); console.log(date, 'to date')}} 
+            id="date-field" className="form-control"/>
           </Form.Group>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Challan No.</Form.Label>
             <Form.Control type="text" placeholder="Challan no." value={challanNo} 
@@ -249,7 +254,7 @@ const Report = ({ type }) => {
           </Form.Group>
         </Col>
         {type == "Receipt" && (
-          <Col  className="my-2">
+          <Col xs={6}  className="my-2">
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Job Worker</Form.Label>
               <Select options={dyinglistnames} isSearchable={true} maxMenuHeight={100} onChange={(e) => {setdying(e.value);}}/>
@@ -258,8 +263,8 @@ const Report = ({ type }) => {
         )}
       </Row>
       <Row className="pt-3 d-print-none">
-        <Col md={1}><p>Quality</p></Col>
-        <Col  className="my-2">
+        <Col xs={12} md={1}><p>Quality</p></Col>
+        <Col xs={6} className="my-2">
           <Select options={qualitynames} value={{ value: name, label: name }} maxMenuHeight={100} isSearchable={true} 
           onChange={(e) => {
             setname(e.value);setqualityType("");setdataValue("");
@@ -268,19 +273,19 @@ const Report = ({ type }) => {
             nextActiveInput.focus();
           }}/>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "color")}
             isSearchable={true} isDisabled={getListDetails(name, "color").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("color");setdataValue(e.value);}}/>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Select maxMenuHeight={100}
             options={getListDetails(name, "chartwise")}
             isSearchable={true} isDisabled={getListDetails(name, "chartwise").length > 0 ? false : true}
             styles={disabledStyles} onChange={(e) => {setqualityType("chartwise");setdataValue(e.value);}}/>
         </Col>
-        <Col  className="my-2">
+        <Col xs={6} className="my-2">
           <Select options={getListDetails(name, "design")} maxMenuHeight={100}
             isSearchable={true} classNamePrefix="react-select" 
             isDisabled={getListDetails(name, "design").length > 0 ? false : true} styles={disabledStyles}

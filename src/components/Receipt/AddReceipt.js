@@ -1,28 +1,20 @@
-import { Button, Table, Form, Row, Col, Alert } from "react-bootstrap";
+import { Button, Table, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { db } from "../../firebase";
 import {
   collection,
-  addDoc,
   query,
   onSnapshot,
   setDoc,
   doc,
-  FieldValue,
-  updateDoc,
-  increment,
   getDoc,
-  limit,
-  serverTimestamp,
-  orderBy,
-  where,
-  getDocs,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, withRouter } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   dateFormat,
   getAllQualities,
+  getFinalTime,
   getValueFormatDate,
 } from "../../api/firebase-api";
 import { disabledStyles } from "../../dropdown/disabledStyles";
@@ -45,13 +37,12 @@ function AddReceipt({ type, history }) {
 
   const [disableSubmit, setdisableSubmit] = useState(false);
 
-  var todayDate = getValueFormatDate(new Date().getTime());
-  const[timestamp, setTimestamp]= useState(new Date(todayDate).getTime());
-  console.log(timestamp, 'todayDate')
+  const[timestamp, setTimestamp]= useState(getFinalTime(new Date()));
 
   const handleSubmit = async (e) => {
     setdisableSubmit(true);
     e.preventDefault();
+
     if(date == "" || date == undefined){
       console.log('throw error')
       alert('use proper date form dd/mm')
@@ -75,14 +66,15 @@ function AddReceipt({ type, history }) {
           if(item.value == undefined || item.value =='') return false
           return true 
         })
-            
+
+        var convertedDate = getFinalTime(challanDateTime);
         if(editid){
           setDoc(doc(db, "Challan", editid), 
-          {id: editid,challanDateTime,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka,timestamp})
+          {id: editid,challanDateTime: convertedDate,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka,timestamp})
           .then(doc => navigate("/report"))
         }else{
           setDoc(doc(db, "Challan", id), 
-          {id,challanDateTime,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka, timestamp})
+          {id,challanDateTime: convertedDate,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka, timestamp})
           .then(message => {setchallanNo("");setdying("");setdataList([{ name: "", num: 0 }]);setdisableSubmit(false);setTotalTaka(0); window.location.reload(true)})       
         }
       }

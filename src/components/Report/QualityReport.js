@@ -145,8 +145,9 @@ var result = qualitylist
               var currentQuantity = item.quantity;
               var value = item.name
               var finalStock = challanQualities.reduce((result, item)=>{
-                if(item.name == singleQualityName && item.value == value && item.type == "Receipt") return result + item.num_of_taka
-                if(item.name == singleQualityName && item.value == value && item.type == "Dispatch") return result - item.num_of_taka
+                var num_of_taka = (!isNaN(item.num_of_taka))? item.num_of_taka : 0
+                if(item.name == singleQualityName && item.value == value && item.type == "Receipt") return result + num_of_taka
+                if(item.name == singleQualityName && item.value == value && item.type == "Dispatch") return result - num_of_taka
                 return result
               },currentQuantity)
               return{

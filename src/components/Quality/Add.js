@@ -1,10 +1,8 @@
-import { Button, Container, Table, Form, Row, Col } from "react-bootstrap";
+import { Button, Form, Row, Col } from "react-bootstrap";
 import { db } from "../../firebase";
 import {
   collection,
-  addDoc,
   query,
-  onSnapshot,
   setDoc,
   doc,
   getDoc,
@@ -16,6 +14,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import SingleRow from "./SingleRow";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
+import { normalDateFormat } from "../../api/firebase-api";
 
 function AddQuality({ history }) {
   var { editname } = useParams();
@@ -159,13 +158,13 @@ function AddQuality({ history }) {
       fetchData();
     }
   }, [editname]);
-
+  var todaysDate = new Date();
   return (
     <>
       <Form
         onSubmit={handleSubmit} onKeyPress={(event) => {if (event.key === "Enter") event.preventDefault();}}>
         <h3 className="mb-4">{editname ? `Edit Quality ${editname}` : "Add Quality"}</h3>
-        <Row>
+        <Row className="d-print-none">
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Name</Form.Label>
@@ -188,6 +187,7 @@ function AddQuality({ history }) {
             </Form.Group>
           </Col>
         </Row>
+        <div className="pb-2"><h6>Date: {normalDateFormat(todaysDate)} <span className="px-2">  </span> Time: {todaysDate.getHours()}:{todaysDate.getMinutes()}</h6></div>
         <Row>
 
         {(type == 'color') &&
@@ -215,11 +215,12 @@ function AddQuality({ history }) {
           </Col>
         }
         </Row>
-        <div className="mt-4">
+        <div className="mt-4 d-print-none">
           <Button variant="primary" type="submit">SAVE</Button>
           <LinkContainer to="/master/quality">
             <Button id="close-btn" variant="danger" className="mx-2" type="button">CLOSE</Button>
           </LinkContainer>
+          <Button variant="primary" type="button" onClick={()=>window.print()}>Print</Button>
         </div>
       </Form>
     </>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import {collection,query,onSnapshot,limit,orderBy, where, updateDoc, getDocs, doc} from "firebase/firestore";
-import { Row, Col, Alert } from "react-bootstrap";
-import { getChallans, normalDateFormat } from "../../api/firebase-api";
+import {collection,query,limit,orderBy, where, getDocs, doc, updateDoc} from "firebase/firestore";
+import { Row, Col } from "react-bootstrap";
+import { getChallans, getFinalTime, normalDateFormat } from "../../api/firebase-api";
 import ReactTable from "../ReactTable/ReactTable";
 
 export default function LastReceipt() {
@@ -22,6 +22,17 @@ export default function LastReceipt() {
     };
     getLastReceipts();
 
+    // const q = query(collection(db, "Challan"), where("challanDateTime", "==", 1674604800000));
+    // console.log('get challans')
+    // getDocs(q).then((docs)=>{
+    //   docs.forEach((item)=>{
+    //     var id = item.id;
+    //     const queryRef = doc(db, "Challan", id);
+    //     const challandateTime = getFinalTime('2023-01-25')
+    //     console.log(challandateTime, 'challandateTime', id)
+    //     updateDoc(queryRef, {"challanDateTime": challandateTime})
+    //   })
+    // })
   },[]);
 
   const columns = React.useMemo(
