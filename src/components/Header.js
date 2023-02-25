@@ -1,10 +1,10 @@
-import React from "react";
-import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import React, { useState } from "react";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { Link } from "react-router-dom";
 
 const header = () => {
   var currentURL = window.location.origin;
+
   return (
     <>
       <div className="text-center py-2 d-print-none">
@@ -14,7 +14,7 @@ const header = () => {
           </Navbar.Brand>
         </LinkContainer>
       </div>
-      <Navbar className="px-5 justify-center d-print-none" bg="light" expand="lg">
+      <Navbar className="px-5 justify-center d-print-none" bg="light" expand="lg" collapseOnSelect >
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">

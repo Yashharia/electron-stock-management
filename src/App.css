@@ -117,3 +117,9 @@
             width: 8.333333333333332%;
       }            
 }
+
+@media screen and (max-width: 786px) {
+  .mobile-text {
+    font-size: 12px;
+  }
+}

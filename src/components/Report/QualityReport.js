@@ -8,6 +8,8 @@ import CloseBtn from "../CloseBtn/CloseBtn";
 import ReactTable from "../ReactTable/ReactTable";
 
 const QualityReport = () => {
+  var currentURL = window.location.origin;
+
   const [minVal, setminVal] = useState(0);
   const [qualitylist, setqualitylist] = useState([]);
   const [data, setdata] = useState([]);
@@ -156,26 +158,47 @@ var result = qualitylist
                 rowColor: (finalStock < minVal)? "#fda09b" : "papayawhip" 
               }
             })
+
+            const newArr = [...qualityDataList];
+            const middleIndex = Math.ceil(newArr.length / 2);
+
+            const firstHalf = newArr.splice(0, middleIndex);   
+            const secondHalf = newArr.splice(-middleIndex);
             return (
-              <Col className="mb-4 single-quality" xs={6} sm={6} md={4} xl={2} key={i}>
+              <Col className="mb-4 single-quality" xs={12} sm={6} md={4} xl={2} key={i}>
                 <div className="alert alert-success">
                   <Row>
                     <Col xs={6} md={9}><p><strong>{singleQualityName} </strong></p></Col>
                     <Col xs={6} md={2}><div style={{ textAlign: "right" }}> <strong>{totalNum?.qualityTotal}</strong></div>
                     </Col>
                   </Row>
+
+                  {(currentURL === "https://yashharia.github.io" )?
+                        <Row>
+                          <Col> 
+                            <ReactTable columns={columns} data={firstHalf} initialState={initialState} newClassName='mobile-text'
+                            getTrProps={(state, rowInfo) => {
+                              if (rowInfo) return {style: {background: rowInfo.row.quantity < minVal ? 'red' : ''}};
+                              return {};
+                            }}/>
+                          </Col>
+
+                          {secondHalf.length > 0 &&
+                            <Col>
+                              <ReactTable columns={columns} data={secondHalf} initialState={initialState} newClassName='mobile-text'
+                              getTrProps={(state, rowInfo) => {
+                                if (rowInfo) return {style: {background: rowInfo.row.quantity < minVal ? 'red' : ''}};
+                                return {};
+                              }}/>
+                            </Col>
+                          }
+                        </Row> : 
                           <ReactTable columns={columns} data={qualityDataList} initialState={initialState}
                           getTrProps={(state, rowInfo) => {
-                            if (rowInfo) {
-                              return {
-                                style: {
-                                  background: rowInfo.row.quantity < minVal ? 'red' : ''
-                                }
-                              };
-                            }
+                            if (rowInfo) return {style: {background: rowInfo.row.quantity < minVal ? 'red' : ''}};
                             return {};
-                          }}
-                          />
+                          }} />
+                  }
                 </div>
               </Col>
             );
