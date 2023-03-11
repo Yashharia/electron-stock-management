@@ -214,8 +214,7 @@ const Report = ({ type }) => {
 
   let totalVal = 0;
   var finalData = filteredData.flatMap((data, i)=>{ // Add line for total between each challans
-    var currNum_of_taka = (data.num_of_taka != undefined && !isNaN(data.num_of_taka))? data.num_of_taka : 0;
-    totalVal = totalVal + (!isNaN(currNum_of_taka))? currNum_of_taka : 0 ;
+    totalVal = totalVal + data.num_of_taka ?? 0 ;
     var nextData = (filteredData[i+1])? filteredData[i+1].challanNo ?? 0 : 0;
     if(data.challanNo != nextData && i != filteredData.length -1) {
       var totalNum = totalVal;
@@ -266,7 +265,7 @@ const Report = ({ type }) => {
           </Form.Group>
         </Col>
         {type == "Receipt" && (
-          <Col xs={6}  className="my-2">
+          <Col   className="my-2">
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Job Worker</Form.Label>
               <Select options={dyinglistnames} isSearchable={true} maxMenuHeight={100} onChange={(e) => {setdying(e.value);}}/>
