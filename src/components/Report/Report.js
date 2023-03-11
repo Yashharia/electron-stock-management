@@ -105,36 +105,36 @@ const Report = ({ type }) => {
       {
         Header: "Date",
         accessor: "date",
-        width: "8%",
+        width: "2%",
         minWidth: '90px',
       },
       {
         Header: "Taka Quality",
         accessor: "taka_quality",
-        width: "20%",
+        width: "10%",
       },
       {
         Header: "Color",
         accessor: "color",
         canFilter: true,
-        width: "2%",
+        width: "5%",
       },
       {
         Header: "Design",
         accessor: "design",
         canFilter: true,
-        width: "2%",
+        width: "5%",
       },
       {
         Header: "Chartwise",
         accessor: "chartwise",
         canFilter: true,
-        width: "2%",
+        width: "5%",
       },
       {
         Header: "Num of Taka",
         accessor: "num_of_taka",
-        width: "6%",
+        width: "5%",
       }
     ]
 
@@ -143,7 +143,7 @@ const Report = ({ type }) => {
       columns.push({Header: "",accessor: "delete",width: "2%",})
     }
 
-    if(type !== "Dispatch") columns.splice(2,0,{Header: "Job worker",accessor: "dying",width: "10%",})
+    if(type !== "Dispatch") columns.splice(2,0,{Header: "Job worker",accessor: "dying",width: "5%",})
 
   const getListDetails = (name, listName) => {
     let arr = [...qualitylist];
@@ -210,8 +210,20 @@ const Report = ({ type }) => {
     taka_quality: <b>TOTAL QTY</b>,
     num_of_taka: <b>{totalqty}</b>
   }]
+  console.log(filteredData)
 
-  console.log(quickDates, 'quickdates')
+  let totalVal = 0;
+  var finalData = filteredData.flatMap((data, i)=>{ // Add line for total between each challans
+    var currNum_of_taka = (data.num_of_taka != undefined && !isNaN(data.num_of_taka))? data.num_of_taka : 0;
+    totalVal = totalVal + (!isNaN(currNum_of_taka))? currNum_of_taka : 0 ;
+    var nextData = (filteredData[i+1])? filteredData[i+1].challanNo ?? 0 : 0;
+    if(data.challanNo != nextData && i != filteredData.length -1) {
+      var totalNum = totalVal;
+      totalVal = 0;
+      return [data, {num_of_taka : <b>{totalNum}</b>}];
+    }
+    return data;
+  })
 
   return (
     <>
@@ -300,7 +312,7 @@ const Report = ({ type }) => {
       <div className="mb-1">
         <b>Form date: {normalDateFormat(fromDate)}</b> <br/>  <b>To date: {normalDateFormat(toDate)}</b>
       </div>
-      {data.length > 0 && <ReactTable columns={columns} data={filteredData} showEditDelete={true}/>}
+      {data.length > 0 && <ReactTable columns={columns} data={finalData} showEditDelete={true}/>}
       <br/>
       <div className="text-center d-print-none"><CloseBtn/></div>
     </Container>

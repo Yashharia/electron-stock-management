@@ -71,7 +71,7 @@ function AddReceipt({ type, history }) {
         if(editid){
           setDoc(doc(db, "Challan", editid), 
           {id: editid,challanDateTime: convertedDate,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka,timestamp})
-          .then(doc => navigate("/report"))
+          .then(doc => (type == "Receipt")? navigate("/report") : navigate("/dispact-report/"))
         }else{
           setDoc(doc(db, "Challan", id), 
           {id,challanDateTime: convertedDate,challanNo,dying,dataList: dataListVal, qualities,qualitiesValues, type, totalTaka, timestamp})
@@ -131,8 +131,7 @@ function AddReceipt({ type, history }) {
     var newData = [...dataList];
     newData[i] = {...newData[i],...value};
     
-    if (newData[newData.length - 1].name != "" && type == "Receipt") newData.push({ name: "" });
-    if (newData[newData.length - 1].name != "" && newData[newData.length - 1].value != undefined && type == "Dispatch" ) {
+    if (newData[newData.length - 1].name != "" && newData[newData.length - 1].value != undefined ) { // previous condition had type === "Dispatch"
       var indexVal =newData.length - 1 ;
       if(indexVal < 0) indexVal = 0
       newData.push({ name: newData[indexVal].name });
@@ -186,8 +185,6 @@ function AddReceipt({ type, history }) {
   });
 
   qualitynames.unshift({ value: "", label: "Select option" })
-
-  console.log(dataList,'dataList')
 
   return (
     <>
@@ -309,7 +306,7 @@ function AddReceipt({ type, history }) {
                     <Form.Control
                       type="number" step="any" placeholder="Num of taka" value={dataList[i].num}
                       onChange={(e) => {console.log(e, 'data ee'); addData(i, {"num": parseFloat(e.target.value)}); }}
-                      onKeyDown={(e) => (e.key === "Tab" && type === "Dispatch")? moveTwoSteps(i) : ''}
+                      onKeyDown={(e) => (e.key === "Tab")? moveTwoSteps(i) : ''}
                     />
                   </td>
                 </tr>
