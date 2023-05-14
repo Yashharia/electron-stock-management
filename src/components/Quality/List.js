@@ -1,6 +1,6 @@
 import { Button, Container, Table, Form } from "react-bootstrap";
 import { db } from "../../firebase";
-import {doc,deleteDoc,} from "firebase/firestore";
+import {doc,deleteDoc,getDocs, where, collection, query} from "firebase/firestore";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import CloseBtn from "../CloseBtn/CloseBtn";
@@ -22,6 +22,21 @@ function QualityList() {
 
   var result = Quality;
   if(search && search !="") result = result.filter((item) => item.name.includes(search) )
+
+  const deleteQuality = async(id) => {
+    console.log(id,'id')
+    const q = query(collection(db, "Challan"), where("qualities", "array-contains", id));
+    getDocs(q).then(docs =>{
+      if (docs.size > 0) {
+        alert('Challans exist for this quality, you cannot delete it')
+      }else{
+        if (window.confirm("Are you sure you want to delete?") == true) {
+          deleteDoc(doc(db, "Quality", id))
+        }
+      }
+    })
+  }
+
   return (
     <>
       <h1 className="text-center">Quality</h1>
@@ -58,9 +73,7 @@ function QualityList() {
                 </td>
                 <td className="text-center">
                   <Button variant="danger"
-                    onClick={() => {
-                      if (window.confirm("Are you sure you want to delete?") == true) deleteDoc(doc(db, "Quality", data.id));
-                    }}>Delete</Button>
+                    onClick={() => { deleteQuality(data.id) }}>Delete</Button>
                 </td>
               </tr>
             )}

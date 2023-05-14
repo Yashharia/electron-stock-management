@@ -29,10 +29,22 @@ function AddQuality({ history }) {
     design: [{ name: "", quantity: 0 }],
     chartwise: [{ name: "", quantity: 0 }],
   });
+  const [oldQualityData, setOldQualityData] = useState([])
+  let notMatchingProps = [];
+  let notMatchingNames = [];
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // if(notMatchingNames.length > 0){
+    //   notMatchingNames.forEach(async(ele, i) => {
+    //     if(ele == ""){
+    //       console.log(notMatchingProps(i))
+    //       const q = query(collection(db, "Challan"), where("qualities", "array-contains", oldName));
+    //     }
+    //   })
+    // }
 
     if (name !== "") {
       //adding data in firebase in eaiser accessible way of objects and keys
@@ -60,23 +72,38 @@ function AddQuality({ history }) {
           chartwise: completeData["chartwise"],
         });
         
-        if(oldName != name){
+        if((oldName != name) || (notMatchingProps.length > 0)){
           const q = query(collection(db, "Challan"), where("qualities", "array-contains", oldName));
+          console.log('edit the quality', oldName)
           getDocs(q).then(docs =>{
-            docs.forEach(async(item) =>{
-              console.log(item,'item')
-              var id = item.id;
-              var data = item.data();
-              var qualities = data.qualities.map(function(value) {
-                return (value === oldName) ? name : value;
-              });
-              var dataList = data.dataList.map(function(obj) {
-                return obj.name === oldName ? {...obj, name: name} : obj;
-              });
-              
-              const queryRef = doc(db, "Challan", id);
-              await updateDoc(queryRef, {"qualities": qualities, "dataList": dataList})
-            })
+            
+              docs.forEach(async(item) =>{
+                var id = item.id;
+                var data = item.data();
+                var qualitiesValues = data.qualitiesValues;
+                var qualities = data.qualities.map(function(value) {
+                  return (value === oldName) ? name : value;
+                });
+                var dataList = data.dataList.map(function(obj) {
+                  return obj.name === oldName ? {...obj, name: name} : obj;
+                });
+
+                //changing quality values
+                var exists = notMatchingProps.some(function(element) {
+                  return qualitiesValues.includes(element);
+                });
+
+                if(exists){
+                  dataList = dataList.map(function(obj) {
+                    return (obj.name === oldName && notMatchingProps.includes(obj.value)) ? {...obj, value: notMatchingNames[notMatchingProps.indexOf(obj.value)]} : obj;
+                  });
+                  qualitiesValues = [...new Set(dataList.map(item => item.value))].filter((name) => {return name !== undefined});
+                }
+                
+                console.log(id, qualitiesValues, notMatchingProps,dataList)
+                const queryRef = doc(db, "Challan", id);
+                await updateDoc(queryRef, {"qualities": qualities, "dataList": dataList, "qualitiesValues": qualitiesValues})
+              })
           })
         }
       }
@@ -99,6 +126,7 @@ function AddQuality({ history }) {
         changedArr.splice(i, 1); // remove empty values
       setqualityData(changeObj);
       setTotal(changeObj[type].reduce((result,item)=> result + item.quantity,0))
+      console.log(qualityData, 'qualityData')
     },
     [qualityData]
   );
@@ -114,6 +142,7 @@ function AddQuality({ history }) {
         const querySnapshot = await getDoc(doc(db, "Quality", editname));
         if (querySnapshot.exists()) {
           let obj = querySnapshot.data();
+
           Object.entries(obj).map(([key, value]) => {
             if (Object.keys(obj[key]).length > 0) {
               arrayTemplate[key] = [];
@@ -139,11 +168,12 @@ function AddQuality({ history }) {
             });
           }
   
-          if(arrayTemplate.chartwise){arrayTemplate.chartwise = sortArrayByName(arrayTemplate.chartwise);console.log(arrayTemplate.chartwise,'arrayTemplate.chart');}
-          if(arrayTemplate.color){arrayTemplate.color = sortArrayByName(arrayTemplate.color); console.log(arrayTemplate.color,'arrayTemplate.color');}
+          if(arrayTemplate.chartwise){arrayTemplate.chartwise = sortArrayByName(arrayTemplate.chartwise);}
+          if(arrayTemplate.color){arrayTemplate.color = sortArrayByName(arrayTemplate.color);}
           if(arrayTemplate.design){arrayTemplate.design = sortArrayByName(arrayTemplate.design);}
 
           setqualityData(arrayTemplate);
+          setOldQualityData(obj);
           var currname = (obj.name != undefined)? obj.name : querySnapshot.id
           setname(currname);
           setOldName(currname);
@@ -158,6 +188,27 @@ function AddQuality({ history }) {
       fetchData();
     }
   }, [editname]);
+
+  let obj = oldQualityData[type]
+
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      let value = obj[key];
+      if (key !== value.name) {
+        notMatchingProps.push(key);
+        notMatchingNames.push(value.name);
+      }
+    }
+  }
+
+  if (notMatchingProps.length === 0) {
+    console.log('All object property names match their respective values.');
+  } else {
+    console.log(`The following property names do not match their respective names`,notMatchingProps);
+    console.log(`The corresponding names are:`,notMatchingNames);
+  }
+
+
   var todaysDate = new Date();
   return (
     <>
@@ -198,22 +249,15 @@ function AddQuality({ history }) {
             })}
           </Col>
         }
-        {(type == 'chartwise') &&
+        {(type == 'chartwise' || type == 'design') &&
           <Col>
-            Chartwise & Design
-            {qualityData["chartwise"].map((data, i) => {
-              return ( <SingleRow key={i} arrayName="chartwise" i={i} name={data.name} quantity={data.quantity} onChange={setData}/>);
+            Only {type}
+            {qualityData[type].map((data, i) => {
+              return ( <SingleRow key={i} arrayName={type} i={i} name={data.name} quantity={data.quantity} onChange={setData}/>);
             })}
           </Col>
         }
-        {(type == 'design') &&
-          <Col>
-            Only Design
-            {qualityData["design"].map((data, i) => {
-              return (<SingleRow key={i} arrayName="design" i={i} name={data.name} quantity={data.quantity} onChange={setData}/>);
-            })}
-          </Col>
-        }
+        
         </Row>
         <div className="mt-4 d-print-none">
           <Button variant="primary" type="submit">SAVE</Button>

@@ -1,22 +1,10 @@
 import { Button, Table, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { db } from "../../firebase";
-import {
-  collection,
-  query,
-  onSnapshot,
-  setDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import {collection,query,onSnapshot,setDoc,doc,getDoc} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  dateFormat,
-  getAllQualities,
-  getFinalTime,
-  getValueFormatDate,
-} from "../../api/firebase-api";
+import {dateFormat,getAllQualities,getFinalTime,getValueFormatDate} from "../../api/firebase-api";
 import { disabledStyles } from "../../dropdown/disabledStyles";
 import CloseBtn from "../CloseBtn/CloseBtn";
 import DatePicker from "react-datepicker";
@@ -42,6 +30,13 @@ function AddReceipt({ type, history }) {
   const handleSubmit = async (e) => {
     setdisableSubmit(true);
     e.preventDefault();
+
+    if(dataList.length < 0 || dataList[0].type == undefined){
+      console.log('throw error')
+      alert('Color/Chartwise/Design not selected for some rows')
+      setdisableSubmit(false);
+      return
+    } 
 
     if(date == "" || date == undefined){
       console.log('throw error')
@@ -299,7 +294,7 @@ function AddReceipt({ type, history }) {
                       maxMenuHeight={100}
                       isDisabled={getListDetails(dataList[i].name , "design").length > 0 ? false : true}
                       styles={disabledStyles} 
-                      value={qualityType == "design" ? { value: selectvalue, label: selectvalue } : null}
+                      value={qualityType == "design" ? { value: selectvalue, label: selectvalue } : ""}
                     />
                   </td>
                   <td>

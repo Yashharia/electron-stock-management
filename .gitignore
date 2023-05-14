@@ -7,6 +7,7 @@
 /.pnp
 .pnp.js
 /src/firebase.js
+/database-backup
 
 # testing
 /coverage
