@@ -18,6 +18,10 @@ const QualityReport = () => {
   const [challanQualities, setChallanQualities] = useState([]);
   const [isRefresh, setIsRefresh] = useState(true)
 
+  const [zeroArr, setZeroArr] = useState([]);
+  const [searchArr, setSearchArr] = useState([]);
+  console.log(searchArr);
+
   var types = ["color", "chartwise", "design"];
   var [challans, setChallans] = useState([]);
 
@@ -38,6 +42,7 @@ const QualityReport = () => {
         }
         qualityObj.data=qualityData;
         setQualities.push(qualityObj);
+
       });
       setqualitylist(setQualities);
     })
@@ -45,12 +50,10 @@ const QualityReport = () => {
     getChallans(collection(db, "Challan")).then(docs=> {setChallans(docs); console.log(docs,'docs')})
 
     setTimeout(()=>setIsRefresh(false),500)
-    
   }
   
   useEffect(() => {
-
-   getChallanData();
+    getChallanData();
    setIsRefresh(false)
   }, []);
 
@@ -82,10 +85,31 @@ const QualityReport = () => {
       qualityTotal : challanValues
     };
   });
-  setqualityNames(qualitynames);
+  setqualityNames(qualitynames); // set dropdown values
 
 },[challans])
 
+
+const addToZeroArr = (singleQualityName, e) => {
+  if(e){
+    setZeroArr([...zeroArr,singleQualityName])
+  }else{
+    const removeFromZeroArr = zeroArr.filter(item => item !== singleQualityName);
+    setZeroArr(removeFromZeroArr);
+  }
+}
+
+const addToSearchArr = (singleQualityName, searchVal) => {
+  const exisitingSearchArr = searchArr.find(row => row.name === singleQualityName)
+  if(exisitingSearchArr){
+    var newSearchArr = searchArr.map((row)=>{
+      return (row.name == singleQualityName)? {...row, searchVal: searchVal} : row
+    })
+    setSearchArr(newSearchArr);
+  }else{
+    setSearchArr([...searchArr,{name: singleQualityName, searchVal: searchVal}])
+  }
+}
 
 var result = qualitylist
  if (filterList.length > 0) result = qualitylist.filter((item) => filterList.some((filterItem) => filterItem.value === item.name));
@@ -106,7 +130,7 @@ var result = qualitylist
           <Col>
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Quality</Form.Label>
-              <Select isMulti options={qualityNames} value={filterList} isSearchable={true} onChange={(e) => {setfilterList(e);}} maxMenuHeight={100}/>
+              <Select isMulti options={qualityNames} value={filterList} isSearchable={true} onChange={(e) => {setfilterList(e); console.log(e)}} maxMenuHeight={100}/>
             </Form.Group>
           </Col>
           <Col md={2} className="d-flex justify-content-center align-items-end pb-2">
@@ -152,12 +176,32 @@ var result = qualitylist
                 if(item.name == singleQualityName && item.value == value && item.type == "Dispatch") return result - num_of_taka
                 return result
               },currentQuantity)
+            
+
               return{
                 name: value,
                 quantity : finalStock,
                 rowColor: (finalStock < minVal)? "#fda09b" : "papayawhip" 
               }
             })
+
+            //remove zero quantity rows
+            if(zeroArr.includes(singleQualityName)) {
+              qualityDataList = qualityDataList.filter((row) => {
+                return row.quantity !== 0
+              });
+            }
+
+            const checkSearchValExist = searchArr.find((row) => row.name === singleQualityName)
+            if(checkSearchValExist) {
+              const searchVal = checkSearchValExist.searchVal.toLowerCase()
+              if(searchVal){
+                qualityDataList = qualityDataList.map((row) => {
+                  const name = row.name.toLowerCase();
+                  return name.includes(searchVal)? {...row, rowColor: "lightgreen"} : row
+                });
+              }
+            }
 
             const newArr = [...qualityDataList];
             const middleIndex = Math.ceil(newArr.length / 2);
@@ -172,6 +216,11 @@ var result = qualitylist
                     <Col xs={6} md={2}><div style={{ textAlign: "right" }}> <strong>{totalNum?.qualityTotal}</strong></div>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col xs={6} md={3}><strong><input type="checkbox" onChange={(e)=>addToZeroArr(singleQualityName, e.target.checked)}/>0</strong></Col>
+                    <Col xs={6} md={9}><input type="text" className="form-control" placeholder="search" onChange={(e)=>addToSearchArr(singleQualityName, e.target.value)}/></Col>
+                  </Row>
+                  <br/>
 
                   {(currentURL === "https://yashharia.github.io" )?
                         <Row>
