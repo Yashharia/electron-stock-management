@@ -84,7 +84,7 @@ const SingleQualityTable = ({
           </Col>
         </Row>
         <br />
-        {(currentURL === "https://yashharia.github.io" || currentURL === "http://localhost:3000") ? (
+        {currentURL === "https://yashharia.github.io" ? (
           <Row>
             <Col>
               <ReactTable
