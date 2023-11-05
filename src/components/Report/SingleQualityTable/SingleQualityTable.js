@@ -3,27 +3,11 @@ import { Row, Col } from "react-bootstrap";
 import ReactTable from "../../ReactTable/ReactTable";
 
 const SingleQualityTable = ({
-  newArr,
   singleQualityName,
   totalNum,
   minVal,
   qualityDataList,
 }) => {
-  const [showZero, setShowZero] = useState(false);
-  const [search, setSearch] = useState("");
-  if (!showZero) {
-    qualityDataList = qualityDataList.filter((row) => {
-      return row.quantity !== 0;
-    });
-  }
-
-  if (search) {
-    qualityDataList = qualityDataList.map((row) => {
-      const name = row.name.toLowerCase();
-      return name.includes(search) ? { ...row, rowColor: "lightgreen" } : row;
-    });
-  }
-  const numOfLine = qualityDataList.reduce((acc, ele) => acc + 1, 0);
   const columns = [
     {
       Header: "Name",
@@ -42,8 +26,25 @@ const SingleQualityTable = ({
       },
     ],
   };
+  const [showZero, setShowZero] = useState(false);
+  const [search, setSearch] = useState("");
+  if (!showZero) {
+    qualityDataList = qualityDataList.filter((row) => {
+      return row.quantity !== 0;
+    });
+  }
+
+  if (search) {
+    qualityDataList = qualityDataList.map((row) => {
+      const name = row.name.toLowerCase();
+      return name.includes(search) ? { ...row, rowColor: "lightgreen" } : row;
+    });
+  }
+  const numOfLine = qualityDataList.reduce((acc, ele) => acc + 1, 0);
+  
   var currentURL = window.location.origin;
 
+  const newArr = [...qualityDataList];
   const middleIndex = Math.ceil(newArr.length / 2);
   const firstHalf = newArr.splice(0, middleIndex);
   const secondHalf = newArr.splice(-middleIndex);
@@ -83,8 +84,7 @@ const SingleQualityTable = ({
           </Col>
         </Row>
         <br />
-
-        {currentURL === "https://yashharia.github.io" ? (
+        {(currentURL === "https://yashharia.github.io" || currentURL === "http://localhost:3000") ? (
           <Row>
             <Col>
               <ReactTable
